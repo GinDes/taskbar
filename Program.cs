@@ -27,8 +27,12 @@ namespace taskbar
 
             if (args.Length == 0 || !File.Exists(args[0]))
             {
-                MessageBox.Show(@"Usage: taskbar.exe [fileFullPath [outputEncoding] [errorEncoding]] [arguments] 
-Example: taskbar.exe D:\tools\ss-local.exe -utf8 -gbk -c D:\tools\ss-config.json", "Usage", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(@"Usage: taskbar.exe fileFullPath [options] [arguments] 
+Example: taskbar.exe D:\tools\ss-local.exe -ope utf8 -ere gbk -fm append -c D:\tools\ss-config.json
+Options: 
+    -ope: utf8 # outputEncoding,used to outputLog,only use utf8 or gbk,default is utf8.
+    -ere: utf8 # errorEncoding,used to errorLog,only use utf8 or gbk,default is utf8.
+    -fm: append #  fileModel,log content is append or write,only use append or write,default is utf8.", "Usage", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Environment.ExitCode = -1;
                 return;
             }
@@ -56,16 +60,19 @@ Example: taskbar.exe D:\tools\ss-local.exe -utf8 -gbk -c D:\tools\ss-config.json
 
             // 新增字符集处理
             var skip = 1;
-            var outputEncoding = args[1];
-            var errorEncoding = args[2];
-            var Usage = @"taskbar.exe [fileFullPath [outputEncoding] [errorEncoding]] [arguments]\r\noptions: \r\n\toutputEncoding: -utf8 #only use -utf8 or -gbkr\n\terrorEncoding: -utf8 #only use -utf8 or -gbk";
-            if ("-utf8".Equals(outputEncoding, StringComparison.OrdinalIgnoreCase) || "-gbk".Equals(outputEncoding, StringComparison.OrdinalIgnoreCase)) {
-                skip += 1;
-                _process.StartInfo.StandardOutputEncoding = System.Text.Encoding.GetEncoding("UTF-8");
+            var fileMode = FileMode.Append;
+            Dictionary<string, object> options = getOptions(args, 6);
+            if (options.ContainsKey("-ope")) {
+                 _process.StartInfo.StandardOutputEncoding = System.Text.Encoding.GetEncoding((string) options["-ope"]);
+                skip++;
             }
-            if ("-utf8".Equals(errorEncoding, StringComparison.OrdinalIgnoreCase) || "-gbk".Equals(errorEncoding, StringComparison.OrdinalIgnoreCase)) {
-                skip += 1;
-                _process.StartInfo.StandardErrorEncoding = System.Text.Encoding.GetEncoding("GBK");
+            if (options.ContainsKey("-ere")) {
+                _process.StartInfo.StandardOutputEncoding = System.Text.Encoding.GetEncoding((string) options["-ere"]);
+                skip++;
+            }
+            if (options.ContainsKey("-fm")) {
+                fileMode = (FileMode) options["-fm"];
+                skip++;
             }
             _process.StartInfo.Arguments = string.Join(" ",args.Skip(skip));
             
@@ -75,7 +82,7 @@ Example: taskbar.exe D:\tools\ss-local.exe -utf8 -gbk -c D:\tools\ss-config.json
             var cts = new CancellationTokenSource();
             Task.Run(() =>
             {
-                using var fs = new FileStream(logFile, FileMode.Append);
+                using var fs = new FileStream(logFile, fileMode);
                 using var sw = new StreamWriter(fs) { AutoFlush = true };
                 using var sro = _process.StandardOutput;
                 while (!cts.IsCancellationRequested)
@@ -88,7 +95,7 @@ Example: taskbar.exe D:\tools\ss-local.exe -utf8 -gbk -c D:\tools\ss-config.json
             }, cts.Token);
             Task.Run(() =>
             {
-                using var fs = new FileStream(errFile, FileMode.Append);
+                using var fs = new FileStream(errFile, fileMode);
                 using var sw = new StreamWriter(fs) { AutoFlush = true };
                 using var sre = _process.StandardError;
                 while (!cts.IsCancellationRequested)
@@ -152,7 +159,60 @@ Example: taskbar.exe D:\tools\ss-local.exe -utf8 -gbk -c D:\tools\ss-config.json
             _notifyIcon.Visible = false;
         }
 
+        // 新增字符集处理
+        private static Dictionary<string, object> getOptions(string[] args, int optionsLen)
+        {  
+            var len = args.Length;
+            Dictionary<string, object> options = new Dictionary<string, object>();
+            for (var i = 0; i < len; i++) {
+                if (i == 0) {
+                    continue;
+                }
 
+                if (i > optionsLen && (options.ContainsKey("outputEncoding") && options.ContainsKey("errorEncoding") && options.ContainsKey("fileMode")))
+                {
+                    break;
+                }
+                
+                if (!options.ContainsKey("outputEncoding") && "-ope".Equals(args[i], StringComparison.OrdinalIgnoreCase) && (i + 1 < len) && ("utf8".Equals(args[i+1], StringComparison.OrdinalIgnoreCase) || "gbk".Equals(args[i+1], StringComparison.OrdinalIgnoreCase)))
+                {
+                    string outputEncoding = args[i+1];
+                    if ("utf8".Equals(outputEncoding, StringComparison.OrdinalIgnoreCase)) {
+                        outputEncoding = "UTF-8";
+                    } else {
+                        outputEncoding = "GBK";
+                    }
+                    options.Add("-ope", outputEncoding);
+                    i++;
+                    continue;
+                }
+                if (!options.ContainsKey("errorEncoding") && "-ere".Equals(args[i], StringComparison.OrdinalIgnoreCase) && (i + 1 < len) && ("utf8".Equals(args[i+1], StringComparison.OrdinalIgnoreCase) || "gbk".Equals(args[i+1], StringComparison.OrdinalIgnoreCase)))
+                {
+                    string errorEncoding = args[i+1];
+                    if ("utf8".Equals(errorEncoding, StringComparison.OrdinalIgnoreCase)) {
+                        errorEncoding = "UTF-8";
+                    } else {
+                        errorEncoding = "GBK";
+                    }
+                    options.Add("-ere", errorEncoding);
+                    i++;
+                    continue;
+                }
+                if (!options.ContainsKey("fileMode") && "-fm".Equals(args[i], StringComparison.OrdinalIgnoreCase) && (i + 1 < len) && ("append".Equals(args[i+1], StringComparison.OrdinalIgnoreCase) || "write".Equals(args[i+1], StringComparison.OrdinalIgnoreCase)))
+                {
+                    string fileMode = args[i+1];
+                    if ("append".Equals(fileMode, StringComparison.OrdinalIgnoreCase)) {
+                        fileMode = FileMode.Append;
+                    } else {
+                        fileMode = FileMode.Write;
+                    }
+                    options.Add("-fm", fileMode);
+                    i++;
+                    continue;
+                }
+            }
+            return options;
+        }
 
         private static bool CheckStartup()
         {
