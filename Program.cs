@@ -202,11 +202,10 @@ Options:
                 {
                     string fileMode = args[i+1];
                     if ("append".Equals(fileMode, StringComparison.OrdinalIgnoreCase)) {
-                        fileMode = FileMode.Append;
+                        options.Add("-fm", FileMode.Append);
                     } else {
-                        fileMode = FileMode.Write;
+                        options.Add("-fm", FileMode.Write);
                     }
-                    options.Add("-fm", fileMode);
                     i++;
                     continue;
                 }
