@@ -61,10 +61,10 @@ Example: taskbar.exe D:\tools\ss-local.exe -c D:\tools\ss-config.json", "Usage",
             var utf8 = "utf-8";
             var gbk = "gbk";
             if (utf8.Equals(outputEncoding, StringComparison.OrdinalIgnoreCase) || gbk.Equals(outputEncoding, StringComparison.OrdinalIgnoreCase)) {
-                StandardOutputEncoding = System.Text.Encoding.GetEncoding(outputEncoding);
+                _process.StartInfo.StandardOutputEncoding = System.Text.Encoding.GetEncoding(outputEncoding);
             }
             if (utf8.Equals(errorEncoding, StringComparison.OrdinalIgnoreCase) || gbk.Equals(errorEncoding, StringComparison.OrdinalIgnoreCase)) {
-                StandardErrorEncoding = System.Text.Encoding.GetEncoding(errorEncoding);
+                _process.StartInfo.StandardErrorEncoding = System.Text.Encoding.GetEncoding(errorEncoding);
             }
             
             _process.Start();
