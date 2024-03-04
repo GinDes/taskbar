@@ -82,7 +82,7 @@ Options:
             var cts = new CancellationTokenSource();
             Task.Run(() =>
             {
-                using var fs = new FileStream(logFile, );
+                using var fs = new FileStream(logFile, fileMode);
                 using var sw = new StreamWriter(fs) { AutoFlush = true };
                 using var sro = _process.StandardOutput;
                 while (!cts.IsCancellationRequested)
@@ -95,7 +95,7 @@ Options:
             }, cts.Token);
             Task.Run(() =>
             {
-                using var fs = new FileStream(errFile, );
+                using var fs = new FileStream(errFile, fileMode);
                 using var sw = new StreamWriter(fs) { AutoFlush = true };
                 using var sre = _process.StandardError;
                 while (!cts.IsCancellationRequested)
