@@ -62,16 +62,16 @@ Options:
             var skip = 1;
             var fileMode = FileMode.Append;
             Dictionary<string, object> options = getOptions(args, 6);
-            if (options.ContainsKey("-ope")) {
-                 _process.StartInfo.StandardOutputEncoding = System.Text.Encoding.GetEncoding((string) options["-ope"]);
+            if (options.ContainsKey("outputEncoding")) {
+                 _process.StartInfo.StandardOutputEncoding = System.Text.Encoding.GetEncoding((string) options["outputEncoding"]);
                 skip++;
             }
-            if (options.ContainsKey("-ere")) {
-                _process.StartInfo.StandardErrorEncoding = System.Text.Encoding.GetEncoding((string) options["-ere"]);
+            if (options.ContainsKey("errorEncoding")) {
+                _process.StartInfo.StandardErrorEncoding = System.Text.Encoding.GetEncoding((string) options["errorEncoding"]);
                 skip++;
             }
-            if (options.ContainsKey("-fm")) {
-                fileMode = (FileMode) options["-fm"];
+            if (options.ContainsKey("fileMode")) {
+                fileMode = (FileMode) options["fileMode"];
                 skip++;
             }
             _process.StartInfo.Arguments = string.Join(" ",args.Skip(skip));
@@ -82,7 +82,7 @@ Options:
             var cts = new CancellationTokenSource();
             Task.Run(() =>
             {
-                using var fs = new FileStream(logFile, fileMode);
+                using var fs = new FileStream(logFile, );
                 using var sw = new StreamWriter(fs) { AutoFlush = true };
                 using var sro = _process.StandardOutput;
                 while (!cts.IsCancellationRequested)
@@ -95,7 +95,7 @@ Options:
             }, cts.Token);
             Task.Run(() =>
             {
-                using var fs = new FileStream(errFile, fileMode);
+                using var fs = new FileStream(errFile, );
                 using var sw = new StreamWriter(fs) { AutoFlush = true };
                 using var sre = _process.StandardError;
                 while (!cts.IsCancellationRequested)
@@ -169,12 +169,12 @@ Options:
                     continue;
                 }
 
-                if (i > optionsLen && (options.ContainsKey("outputEncoding") && options.ContainsKey("errorEncoding") && options.ContainsKey("fileMode")))
+                if (i > optionsLen && (options.ContainsKey("outputEncoding") && options.ContainsKey("errorEncoding") && options.ContainsKey("")))
                 {
                     break;
                 }
                 
-                if (!options.ContainsKey("-ope") && "-ope".Equals(args[i], StringComparison.OrdinalIgnoreCase) && (i + 1 < len) && ("utf8".Equals(args[i+1], StringComparison.OrdinalIgnoreCase) || "gbk".Equals(args[i+1], StringComparison.OrdinalIgnoreCase)))
+                if (!options.ContainsKey("outputEncoding") && "-ope".Equals(args[i], StringComparison.OrdinalIgnoreCase) && (i + 1 < len) && ("utf8".Equals(args[i+1], StringComparison.OrdinalIgnoreCase) || "gbk".Equals(args[i+1], StringComparison.OrdinalIgnoreCase)))
                 {
                     string outputEncoding = args[i+1];
                     if ("utf8".Equals(outputEncoding, StringComparison.OrdinalIgnoreCase)) {
@@ -182,11 +182,11 @@ Options:
                     } else {
                         outputEncoding = "GBK";
                     }
-                    options.Add("-ope", outputEncoding);
+                    options.Add("outputEncoding", outputEncoding);
                     i++;
                     continue;
                 }
-                if (!options.ContainsKey("-ere") && "-ere".Equals(args[i], StringComparison.OrdinalIgnoreCase) && (i + 1 < len) && ("utf8".Equals(args[i+1], StringComparison.OrdinalIgnoreCase) || "gbk".Equals(args[i+1], StringComparison.OrdinalIgnoreCase)))
+                if (!options.ContainsKey("errorEncoding") && "-ere".Equals(args[i], StringComparison.OrdinalIgnoreCase) && (i + 1 < len) && ("utf8".Equals(args[i+1], StringComparison.OrdinalIgnoreCase) || "gbk".Equals(args[i+1], StringComparison.OrdinalIgnoreCase)))
                 {
                     string errorEncoding = args[i+1];
                     if ("utf8".Equals(errorEncoding, StringComparison.OrdinalIgnoreCase)) {
@@ -194,17 +194,17 @@ Options:
                     } else {
                         errorEncoding = "GBK";
                     }
-                    options.Add("-ere", errorEncoding);
+                    options.Add("errorEncoding", errorEncoding);
                     i++;
                     continue;
                 }
-                if (!options.ContainsKey("-fm") && "-fm".Equals(args[i], StringComparison.OrdinalIgnoreCase) && (i + 1 < len) && ("append".Equals(args[i+1], StringComparison.OrdinalIgnoreCase) || "create".Equals(args[i+1], StringComparison.OrdinalIgnoreCase)))
+                if (!options.ContainsKey("fileMode") && "-fm".Equals(args[i], StringComparison.OrdinalIgnoreCase) && (i + 1 < len) && ("append".Equals(args[i+1], StringComparison.OrdinalIgnoreCase) || "create".Equals(args[i+1], StringComparison.OrdinalIgnoreCase)))
                 {
                     string fileMode = args[i+1];
                     if ("append".Equals(fileMode, StringComparison.OrdinalIgnoreCase)) {
-                        options.Add("-fm", FileMode.Append);
+                        options.Add("fileMode", FileMode.Append);
                     } else {
-                        options.Add("-fm", FileMode.Create);
+                        options.Add("fileMode", FileMode.Create);
                     }
                     i++;
                     continue;
