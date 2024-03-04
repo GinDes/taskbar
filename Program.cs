@@ -37,7 +37,7 @@ Example: taskbar.exe D:\tools\ss-local.exe utf-8|gbk utf-8|gbk -c D:\tools\ss-co
             // 新增字符集处理
             var outputEncoding = args[2];
             var errorEncoding = args[4];
-            var arg = string.Join(" ",args.Skip(6));
+            var arg = string.Join(" ",args.Skip(5));
             var selfPath = new Uri(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).LocalPath;
             var dir = (exe.Contains("\\") ? Path.GetDirectoryName(exe) : Path.GetDirectoryName(selfPath))??Environment.CurrentDirectory;
             var logFile = Path.Combine(Path.GetTempPath(),$"taskbar_{Path.GetFileNameWithoutExtension(exe)}.out.log");
