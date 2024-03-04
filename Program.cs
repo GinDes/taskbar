@@ -35,6 +35,9 @@ Example: taskbar.exe D:\tools\ss-local.exe -c D:\tools\ss-config.json", "Usage",
 
             var exe = args[0];
             var arg = string.Join(" ",args.Skip(1));
+            // 新增字符集处理
+            var outputEncoding = string.Join(" ",args.Skip(3));
+            var errorEncoding = string.Join(" ",args.Skip(5));
             var selfPath = new Uri(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).LocalPath;
             var dir = (exe.Contains("\\") ? Path.GetDirectoryName(exe) : Path.GetDirectoryName(selfPath))??Environment.CurrentDirectory;
             var logFile = Path.Combine(Path.GetTempPath(),$"taskbar_{Path.GetFileNameWithoutExtension(exe)}.out.log");
@@ -53,6 +56,17 @@ Example: taskbar.exe D:\tools\ss-local.exe -c D:\tools\ss-config.json", "Usage",
                     CreateNoWindow = true
                 }
             };
+
+            // 新增字符集处理
+            var utf8 = "utf-8";
+            var gbk = "gbk";
+            if (utf8.Equals(outputEncoding, StringComparison.OrdinalIgnoreCase) || gbk.Equals(outputEncoding, StringComparison.OrdinalIgnoreCase)) {
+                StandardOutputEncoding = System.Text.Encoding.GetEncoding(outputEncoding),
+            }
+            if (utf8.Equals(errorEncoding, StringComparison.OrdinalIgnoreCase) || gbk.Equals(errorEncoding, StringComparison.OrdinalIgnoreCase)) {
+                StandardErrorEncoding = System.Text.Encoding.GetEncoding(errorEncoding),
+            }
+            
             _process.Start();
             _jobs.AddProcess(_process.Handle);
 
