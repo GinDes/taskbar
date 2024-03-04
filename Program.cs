@@ -28,7 +28,7 @@ namespace taskbar
             if (args.Length < 2 || !File.Exists(args[0]))
             {
                 MessageBox.Show(@"Usage: taskbar.exe fileFullPath [arguments] 
-Example: taskbar.exe D:\tools\ss-local.exe -c D:\tools\ss-config.json", "Usage", MessageBoxButtons.OK, MessageBoxIcon.Information);
+Example: taskbar.exe D:\tools\ss-local.exe D:\tools\ss-config.json utf-8|gbk utf-8|gbk", "Usage", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Environment.ExitCode = -1;
                 return;
             }
