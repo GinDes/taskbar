@@ -198,7 +198,7 @@ Options:
                     i++;
                     continue;
                 }
-                if (!options.ContainsKey("fileMode") && "-fm".Equals(args[i], StringComparison.OrdinalIgnoreCase) && (i + 1 < len) && ("append".Equals(args[i+1], StringComparison.OrdinalIgnoreCase) || "create".Equals(args[i+1], StringComparison.OrdinalIgnoreCase)))
+                if (!options.ContainsKey("-fm") && "-fm".Equals(args[i], StringComparison.OrdinalIgnoreCase) && (i + 1 < len) && ("append".Equals(args[i+1], StringComparison.OrdinalIgnoreCase) || "create".Equals(args[i+1], StringComparison.OrdinalIgnoreCase)))
                 {
                     string fileMode = args[i+1];
                     if ("append".Equals(fileMode, StringComparison.OrdinalIgnoreCase)) {
