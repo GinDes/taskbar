@@ -204,7 +204,7 @@ Options:
                     if ("append".Equals(fileMode, StringComparison.OrdinalIgnoreCase)) {
                         options.Add("-fm", FileMode.Append);
                     } else {
-                        options.Add("-fm", FileMode.Write);
+                        options.Add("-fm", FileMode.Create);
                     }
                     i++;
                     continue;
