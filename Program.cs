@@ -38,6 +38,7 @@ Options:
             }
 
             var exe = args[0];
+            MessageBox.Show(@"Usage: "+ string.Join(",", args), "args", MessageBoxButtons.OK, MessageBoxIcon.Information);
             //var arg = string.Join(" ",args.Skip(1));
             var selfPath = new Uri(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).LocalPath;
             var dir = (exe.Contains("\\") ? Path.GetDirectoryName(exe) : Path.GetDirectoryName(selfPath))??Environment.CurrentDirectory;
@@ -63,14 +64,19 @@ Options:
             var fileMode = FileMode.Append;
             Dictionary<string, object> options = getOptions(args, 6);
             if (options.ContainsKey("outputEncoding")) {
-                 _process.StartInfo.StandardOutputEncoding = System.Text.Encoding.GetEncoding((string) options["outputEncoding"]);
+                MessageBox.Show(@"Usage: "+ (string) options["outputEncoding"], "outputEncoding", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                var outputEncoding = (string) options["outputEncoding"];
+                 _process.StartInfo.StandardOutputEncoding = System.Text.Encoding.GetEncoding(outputEncoding);
                 skip++;
             }
             if (options.ContainsKey("errorEncoding")) {
-                _process.StartInfo.StandardErrorEncoding = System.Text.Encoding.GetEncoding((string) options["errorEncoding"]);
+                MessageBox.Show(@"Usage: "+ (string) options["errorEncoding"], "errorEncoding", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                var errorEncoding = (string) options["errorEncoding"];
+                 _process.StartInfo.StandardErrorEncoding = System.Text.Encoding.GetEncoding(errorEncoding);
                 skip++;
             }
             if (options.ContainsKey("fileMode")) {
+                MessageBox.Show(@"Usage: "+ ((FileMode) options["fileMode"]).ToString(), "fileMode", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 fileMode = (FileMode) options["fileMode"];
                 skip++;
             }
@@ -169,7 +175,7 @@ Options:
                     continue;
                 }
 
-                if (i > optionsLen && (options.ContainsKey("outputEncoding") && options.ContainsKey("errorEncoding") && options.ContainsKey("")))
+                if (i > optionsLen && (options.ContainsKey("outputEncoding") && options.ContainsKey("errorEncoding") && options.ContainsKey("fileMode")))
                 {
                     break;
                 }
