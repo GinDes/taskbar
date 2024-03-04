@@ -67,7 +67,7 @@ Options:
                 skip++;
             }
             if (options.ContainsKey("-ere")) {
-                _process.StartInfo.StandardOutputEncoding = System.Text.Encoding.GetEncoding((string) options["-ere"]);
+                _process.StartInfo.StandardErrorEncoding = System.Text.Encoding.GetEncoding((string) options["-ere"]);
                 skip++;
             }
             if (options.ContainsKey("-fm")) {
@@ -174,7 +174,7 @@ Options:
                     break;
                 }
                 
-                if (!options.ContainsKey("outputEncoding") && "-ope".Equals(args[i], StringComparison.OrdinalIgnoreCase) && (i + 1 < len) && ("utf8".Equals(args[i+1], StringComparison.OrdinalIgnoreCase) || "gbk".Equals(args[i+1], StringComparison.OrdinalIgnoreCase)))
+                if (!options.ContainsKey("-ope") && "-ope".Equals(args[i], StringComparison.OrdinalIgnoreCase) && (i + 1 < len) && ("utf8".Equals(args[i+1], StringComparison.OrdinalIgnoreCase) || "gbk".Equals(args[i+1], StringComparison.OrdinalIgnoreCase)))
                 {
                     string outputEncoding = args[i+1];
                     if ("utf8".Equals(outputEncoding, StringComparison.OrdinalIgnoreCase)) {
@@ -186,7 +186,7 @@ Options:
                     i++;
                     continue;
                 }
-                if (!options.ContainsKey("errorEncoding") && "-ere".Equals(args[i], StringComparison.OrdinalIgnoreCase) && (i + 1 < len) && ("utf8".Equals(args[i+1], StringComparison.OrdinalIgnoreCase) || "gbk".Equals(args[i+1], StringComparison.OrdinalIgnoreCase)))
+                if (!options.ContainsKey("-ere") && "-ere".Equals(args[i], StringComparison.OrdinalIgnoreCase) && (i + 1 < len) && ("utf8".Equals(args[i+1], StringComparison.OrdinalIgnoreCase) || "gbk".Equals(args[i+1], StringComparison.OrdinalIgnoreCase)))
                 {
                     string errorEncoding = args[i+1];
                     if ("utf8".Equals(errorEncoding, StringComparison.OrdinalIgnoreCase)) {
@@ -198,7 +198,7 @@ Options:
                     i++;
                     continue;
                 }
-                if (!options.ContainsKey("fileMode") && "-fm".Equals(args[i], StringComparison.OrdinalIgnoreCase) && (i + 1 < len) && ("append".Equals(args[i+1], StringComparison.OrdinalIgnoreCase) || "write".Equals(args[i+1], StringComparison.OrdinalIgnoreCase)))
+                if (!options.ContainsKey("fileMode") && "-fm".Equals(args[i], StringComparison.OrdinalIgnoreCase) && (i + 1 < len) && ("append".Equals(args[i+1], StringComparison.OrdinalIgnoreCase) || "create".Equals(args[i+1], StringComparison.OrdinalIgnoreCase)))
                 {
                     string fileMode = args[i+1];
                     if ("append".Equals(fileMode, StringComparison.OrdinalIgnoreCase)) {
