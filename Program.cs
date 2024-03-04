@@ -62,18 +62,10 @@ Example: taskbar.exe D:\tools\ss-local.exe -utf8 -gbk -c D:\tools\ss-config.json
             if ("-utf8".Equals(outputEncoding, StringComparison.OrdinalIgnoreCase) || "-gbk".Equals(outputEncoding, StringComparison.OrdinalIgnoreCase)) {
                 skip += 1;
                 _process.StartInfo.StandardOutputEncoding = System.Text.Encoding.GetEncoding("UTF-8");
-            } else {
-                MessageBox.Show(Usage, "Usage", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                Environment.ExitCode = -1;
-                return;
             }
             if ("-utf8".Equals(errorEncoding, StringComparison.OrdinalIgnoreCase) || "-gbk".Equals(errorEncoding, StringComparison.OrdinalIgnoreCase)) {
                 skip += 1;
                 _process.StartInfo.StandardErrorEncoding = System.Text.Encoding.GetEncoding("GBK");
-            } else {
-                MessageBox.Show(Usage, "Usage", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                Environment.ExitCode = -1;
-                return;
             }
             _process.StartInfo.Arguments = string.Join(" ",args.Skip(skip));
             
