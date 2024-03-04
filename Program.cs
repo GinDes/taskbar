@@ -30,9 +30,9 @@ namespace taskbar
                 MessageBox.Show(@"Usage: taskbar.exe fileFullPath [options] [arguments] 
 Example: taskbar.exe D:\tools\ss-local.exe -ope utf8 -ere gbk -fm append -c D:\tools\ss-config.json
 Options: 
-    -ope: utf8 # outputEncoding,used to outputLog,only use utf8 or gbk,default is utf8.
-    -ere: utf8 # errorEncoding,used to errorLog,only use utf8 or gbk,default is utf8.
-    -fm: append #  fileModel,log content is append or write,only use append or write,default is utf8.", "Usage", MessageBoxButtons.OK, MessageBoxIcon.Information);
+    -ope: utf8 # outputEncoding,used to outputLog,only use utf8 or gbk.
+    -ere: utf8 # errorEncoding,used to errorLog,only use utf8 or gbk.
+    -fm: append #  fileModel,log content is append or write,only use append or write.", "Usage", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Environment.ExitCode = -1;
                 return;
             }
