@@ -25,19 +25,16 @@ namespace taskbar
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            if (args.Length < 2 || !File.Exists(args[0]))
+            if (args.Length == 0 || !File.Exists(args[0]))
             {
-                MessageBox.Show(@"Usage: taskbar.exe fileFullPath [outputEncoding] [errorEncoding] [arguments] 
-Example: taskbar.exe D:\tools\ss-local.exe utf-8|gbk utf-8|gbk -c D:\tools\ss-config.json", "Usage", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(@"Usage: taskbar.exe [fileFullPath [outputEncoding] [errorEncoding]] [arguments] 
+Example: taskbar.exe D:\tools\ss-local.exe -utf8 -gbk -c D:\tools\ss-config.json", "Usage", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Environment.ExitCode = -1;
                 return;
             }
 
             var exe = args[0];
-            // 新增字符集处理
-            var outputEncoding = args[2];
-            var errorEncoding = args[4];
-            var arg = string.Join(" ",args.Skip(5));
+            //var arg = string.Join(" ",args.Skip(1));
             var selfPath = new Uri(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).LocalPath;
             var dir = (exe.Contains("\\") ? Path.GetDirectoryName(exe) : Path.GetDirectoryName(selfPath))??Environment.CurrentDirectory;
             var logFile = Path.Combine(Path.GetTempPath(),$"taskbar_{Path.GetFileNameWithoutExtension(exe)}.out.log");
@@ -47,7 +44,7 @@ Example: taskbar.exe D:\tools\ss-local.exe utf-8|gbk utf-8|gbk -c D:\tools\ss-co
                 StartInfo =
                 {
                     FileName = exe,
-                    Arguments = arg,
+                    //Arguments = arg,
                     WorkingDirectory = dir,
                     WindowStyle = ProcessWindowStyle.Hidden,
                     UseShellExecute = false,
@@ -58,14 +55,27 @@ Example: taskbar.exe D:\tools\ss-local.exe utf-8|gbk utf-8|gbk -c D:\tools\ss-co
             };
 
             // 新增字符集处理
-            var utf8 = "utf-8";
-            var gbk = "gbk";
-            if (utf8.Equals(outputEncoding, StringComparison.OrdinalIgnoreCase) || gbk.Equals(outputEncoding, StringComparison.OrdinalIgnoreCase)) {
-                _process.StartInfo.StandardOutputEncoding = System.Text.Encoding.GetEncoding(outputEncoding);
+            var skip = 1;
+            var outputEncoding = args[1];
+            var errorEncoding = args[2];
+            var Usage = @"taskbar.exe [fileFullPath [outputEncoding] [errorEncoding]] [arguments]\r\noptions: \r\n\toutputEncoding: -utf8 #only use -utf8 or -gbkr\n\terrorEncoding: -utf8 #only use -utf8 or -gbk";
+            if ("-utf8".Equals(outputEncoding, StringComparison.OrdinalIgnoreCase) || "-gbk".Equals(outputEncoding, StringComparison.OrdinalIgnoreCase)) {
+                skip += 1;
+                _process.StartInfo.StandardOutputEncoding = System.Text.Encoding.GetEncoding("UTF-8");
+            } else {
+                MessageBox.Show(Usage, "Usage", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Environment.ExitCode = -1;
+                return;
             }
-            if (utf8.Equals(errorEncoding, StringComparison.OrdinalIgnoreCase) || gbk.Equals(errorEncoding, StringComparison.OrdinalIgnoreCase)) {
-                _process.StartInfo.StandardErrorEncoding = System.Text.Encoding.GetEncoding(errorEncoding);
+            if ("-utf8".Equals(errorEncoding, StringComparison.OrdinalIgnoreCase) || "-gbk".Equals(errorEncoding, StringComparison.OrdinalIgnoreCase)) {
+                skip += 1;
+                _process.StartInfo.StandardErrorEncoding = System.Text.Encoding.GetEncoding("GBK");
+            } else {
+                MessageBox.Show(Usage, "Usage", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Environment.ExitCode = -1;
+                return;
             }
+            _process.StartInfo.Arguments = string.Join(" ",args.Skip(skip));
             
             _process.Start();
             _jobs.AddProcess(_process.Handle);
