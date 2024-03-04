@@ -27,17 +27,17 @@ namespace taskbar
 
             if (args.Length < 2 || !File.Exists(args[0]))
             {
-                MessageBox.Show(@"Usage: taskbar.exe fileFullPath [arguments] [outputEncoding] [errorEncoding]
-Example: taskbar.exe D:\tools\ss-local.exe D:\tools\ss-config.json utf-8|gbk utf-8|gbk", "Usage", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(@"Usage: taskbar.exe fileFullPath [outputEncoding] [errorEncoding] [arguments] 
+Example: taskbar.exe D:\tools\ss-local.exe utf-8|gbk utf-8|gbk -c D:\tools\ss-config.json", "Usage", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Environment.ExitCode = -1;
                 return;
             }
 
             var exe = args[0];
-            var arg = string.Join(" ",args.Skip(1));
             // 新增字符集处理
-            var outputEncoding = string.Join(" ",args.Skip(3));
-            var errorEncoding = string.Join(" ",args.Skip(5));
+            var outputEncoding = args[2];
+            var errorEncoding = args[4];
+            var arg = string.Join(" ",args.Skip(6));
             var selfPath = new Uri(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).LocalPath;
             var dir = (exe.Contains("\\") ? Path.GetDirectoryName(exe) : Path.GetDirectoryName(selfPath))??Environment.CurrentDirectory;
             var logFile = Path.Combine(Path.GetTempPath(),$"taskbar_{Path.GetFileNameWithoutExtension(exe)}.out.log");
