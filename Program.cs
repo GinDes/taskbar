@@ -105,7 +105,7 @@ Example: taskbar.exe D:\tools\ss-local.exe utf-8|gbk utf-8|gbk -c D:\tools\ss-co
 
             var contextMenu = new ContextMenuStrip();
             frmLogs formLog = null;
-            contextMenu.Items.Add("Show Output Log", null, (s, e) =>
+            var itemShowOutput = contextMenu.Items.Add("Show Output Log", null, (s, e) =>
             {
                 if(formLog == null)
                 {
@@ -142,7 +142,8 @@ Example: taskbar.exe D:\tools\ss-local.exe utf-8|gbk utf-8|gbk -c D:\tools\ss-co
             _notifyIcon.ContextMenuStrip = contextMenu;
             _notifyIcon.DoubleClick += (s, e) =>
             {
-                itemShowErr.PerformClick();
+                //itemShowErr.PerformClick();
+                itemShowOutput.PerformClick();
             };
             Application.Run();
 
